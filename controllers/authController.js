@@ -9,7 +9,7 @@ const generateToken = require('../utils/generateToken');
 exports.register = asyncHandler(async (req, res, next) => {
   
   console.log("Register user : Post-->")
-  const { username, email, password, role } = req.body;
+  const { username, email, password} = req.body;
 
   const emailExists = await User.findOne({ email });
 
@@ -28,8 +28,7 @@ exports.register = asyncHandler(async (req, res, next) => {
   const user = await User.create({
     username,
     email,
-    password,
-    role
+    password
   });
 
   res.status(201).json({
