@@ -9,6 +9,7 @@ const createError = require('http-errors');
   app.use(express.urlencoded({ extended: false}));
   
   app.use('/api', routes);
+  require('./config/passport');
 
  
   //db connection
