@@ -11,7 +11,7 @@ const createError = require('http-errors');
   app.use('/api', routes);
   require('./config/passport');
 
- 
+  console.log("process.env.MONGODB_URI", process.env.MONGODB_URI)
   //db connection
   mongoose.connect(config.db, { useNewUrlParser: true }, (err) => {
     if (err) {
