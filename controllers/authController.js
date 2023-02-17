@@ -71,7 +71,7 @@ exports.login = asyncHandler( async (req, res) => {
 
 // @route POST /auth/getUser
 // @desc get user
-// @access Public
+// @access Private  
 
 exports.getUser = asyncHandler(async (req, res) => {   
   console.log("get user : Get")
