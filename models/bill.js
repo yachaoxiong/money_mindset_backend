@@ -23,6 +23,10 @@ const  billSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  billDate: {
+    type: Date,
+    required: true,
+  },
 }, {
   timestamps: true,
 });
