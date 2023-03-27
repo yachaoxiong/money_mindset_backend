@@ -1,6 +1,7 @@
 const Bill = require("../models/bill");
 const asyncHandler = require("express-async-handler");
 const passport = require("passport");
+const MongoClient = require('mongodb').MongoClient;
 
 // @route get /bills
 // @desc get all bills
@@ -8,14 +9,37 @@ const passport = require("passport");
 
 exports.getBills = asyncHandler(async (req, res) => {
   // get all bills from current user and current year
-  const bills = await Bill.find({
-    user: req.user._id,
-    billDate: {
-      $gte: new Date(new Date().getFullYear(), 0, 1),
-      $lt: new Date(new Date().getFullYear() + 1, 0, 1),
-    },
-  });
-  res.status(200).json({success: true, data: bills});
+  const uri = 'mongodb://localhost:27017/money_mindset';
+  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  try {
+    const pipeline = [
+      {
+        $match: {user: req.user._id,}
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$billDate" } },
+          billItems: { $push: "$$ROOT" }
+        }
+      },
+      {
+        $sort: { "_id": -1 }
+      }
+    ];
+    const result = await client.db().collection('bills').aggregate(pipeline).toArray();
+    res.status(200).json({success: true, data: result});
+  } catch (err) {
+    console.log(err.message);
+  }
+
+  // const bills = await Bill.find({
+  //   user: req.user._id,
+  //   billDate: {
+  //     $gte: new Date(new Date().getFullYear(), 0, 1),
+  //     $lt: new Date(new Date().getFullYear() + 1, 0, 1),
+  //   },
+  // });
+  // res.status(200).json({success: true, data: bills});
 })
 
 // @route get /bills/:id
@@ -50,7 +74,7 @@ exports.createBill = asyncHandler(async (req, res) => {
       user: req.user._id,
       billDate: req.body.billDate,
     });
-  res.status(200).json({success: true, data: bill});
+  res.status(200).json({ success: true, data: bill });
 })
 
 
@@ -61,7 +85,7 @@ exports.createBill = asyncHandler(async (req, res) => {
 exports.updateBill = asyncHandler(async (req, res) => {
 
   const userID = req.user._id;
-  
+
   const bill = await Bill.findById(req.params.id);
   if (!bill) {
     res.status(404);
@@ -85,7 +109,7 @@ exports.updateBill = asyncHandler(async (req, res) => {
 // @route delete /bills/:id
 
 exports.deleteBill = asyncHandler(async (req, res) => {
-   
+
   const userID = req.user._id;
   const bill = await Bill.findById(req.params.id);
   if (!bill) {
@@ -100,8 +124,8 @@ exports.deleteBill = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: {} });
 
 })
-  
 
-  
+
+
 
 
