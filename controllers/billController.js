@@ -4,32 +4,22 @@ const asyncHandler = require("express-async-handler");
 
 exports.getBills = asyncHandler(async (req, res) => {
   // get all bills from current user and current year
-
-    // const pipeline = [
-    //   {
-    //     $match: {user: req.user._id,}
-    //   },
-    //   {
-    //     $group: {
-    //       _id: { $dateToString: { format: "%Y-%m-%d", date: "$billDate" } },
-    //       billItems: { $push: "$$ROOT" }
-    //     }
-    //   },
-    //   {
-    //     $sort: { "_id": -1 }
-    //   }
-    // ];
-    // const result = await Bill.aggregate(pipeline).exec();
-    // res.status(200).json({success: true, data: result});
-
-  const bills = await Bill.find({
-    user: req.user._id,
-    billDate: {
-      $gte: new Date(new Date().getFullYear(), 0, 1),
-      $lt: new Date(new Date().getFullYear() + 1, 0, 1),
-    },
-  }).sort({ billDate: -1 });
-  res.status(200).json({success: true, data: bills});
+    const pipeline = [
+      {
+        $match: {user: req.user._id,}
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$billDate" } },
+          billItems: { $push: "$$ROOT" }
+        }
+      },
+      {
+        $sort: { "_id": -1 }
+      }
+    ];
+    const result = await Bill.aggregate(pipeline).exec();
+    res.status(200).json({success: true, data: result});
 })
 
 // @route get /bills/:id
