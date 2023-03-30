@@ -81,6 +81,7 @@ exports.getBill = asyncHandler(async (req, res) => {
 exports.createBill = asyncHandler(async (req, res) => {
   // create a bill
   console.log("req.body", req.body)
+  
   const bill = await Bill.create(
     {
       name: req.body.name,
@@ -93,7 +94,9 @@ exports.createBill = asyncHandler(async (req, res) => {
       monthNumber:req.body.monthNumber,
       yearNumber:req.body.yearNumber,
     });
+  
   res.status(200).json({ success: true, data: bill });
+
 })
 
 
