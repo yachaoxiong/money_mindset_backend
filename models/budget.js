@@ -1,16 +1,16 @@
 const mongoose= require('mongoose');
 
 //
-const billSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
+const budgetSchema = new mongoose.Schema({
   amount: {
     type: Number,
     required: true,
   },
-  billType: {
+  isTotalBudget: {
+    type: Boolean,
+    required: true,
+  },
+  budgetType: {
     type: String,
     required: true,
   },
@@ -23,15 +23,10 @@ const billSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  billDate: {
+  budgetDate: {
     type: Date,
     required: true,
   },
-  weekNumber:{
-    type:Number,
-    required:true
-  },
-
   monthNumber:{
     type:Number,
     required:true
@@ -44,4 +39,4 @@ const billSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-module.exports = mongoose.model('Bill',billSchema);
+module.exports = mongoose.model('Budget',budgetSchema);

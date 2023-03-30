@@ -1,13 +1,13 @@
 const Bill = require("../models/bill");
 const asyncHandler = require("express-async-handler");
-const passport = require("passport");
-const MongoClient = require('mongodb').MongoClient;
+
 
 // @route get /bills
 // @desc get all bills
 // @access Public
 
 exports.getBills = asyncHandler(async (req, res) => {
+  
   try {
     let groupByField, sortField;
     if (req.params.period === "week") {
@@ -47,6 +47,7 @@ exports.getBills = asyncHandler(async (req, res) => {
 // @access Public
 
 exports.getBill = asyncHandler(async (req, res) => {
+  console.log("getBill --->", req.params.id)
   // get a bill
   const bill = await Bill.findById(req.params.id);
   if (!bill) {
@@ -62,6 +63,7 @@ exports.getBill = asyncHandler(async (req, res) => {
 
 exports.createBill = asyncHandler(async (req, res) => {
   // create a bill
+  console.log("req.body", req.body)
   const bill = await Bill.create(
     {
       name: req.body.name,
@@ -109,7 +111,7 @@ exports.updateBill = asyncHandler(async (req, res) => {
 // @route delete /bills/:id
 
 exports.deleteBill = asyncHandler(async (req, res) => {
-
+  console.log("delete bill")
   const userID = req.user._id;
   const bill = await Bill.findById(req.params.id);
   if (!bill) {
