@@ -1,26 +1,46 @@
 const Bill = require("../models/bill");
 const asyncHandler = require("express-async-handler");
+const passport = require("passport");
+const MongoClient = require('mongodb').MongoClient;
 
+// @route get /bills
+// @desc get all bills
+// @access Public
 
 exports.getBills = asyncHandler(async (req, res) => {
-  // get all bills from current user and current year
+  try {
+    let groupByField, sortField;
+    if (req.params.period === "week") {
+      groupByField = "$weekNumber";
+      sortField = "billDate";
+    } else if (req.params.period === "month") {
+      groupByField = "$monthNumber";
+      sortField = "billDate";
+    } else {
+      groupByField = "$yearNumber";
+      sortField = "billDate";
+    }
+    
     const pipeline = [
       {
-        $match: {user: req.user._id,}
+        $match: { user: req.user._id },
       },
       {
         $group: {
-          _id: { $dateToString: { format: "%Y-%m-%d", date: "$billDate" } },
-          billItems: { $push: "$$ROOT" }
-        }
+          _id: groupByField,
+          billItems: { $push: "$$ROOT" },
+        },
       },
       {
-        $sort: { "_id": -1 }
-      }
+        $sort: { [sortField]: -1 },
+      },
     ];
     const result = await Bill.aggregate(pipeline).exec();
-    res.status(200).json({success: true, data: result});
-})
+    res.status(200).json({ success: true, data: result });
+  } catch (err) {
+    console.log(err.message);
+  }
+});
 
 // @route get /bills/:id
 // @desc get a bill
@@ -36,9 +56,6 @@ exports.getBill = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: bill });
 })
 
-
-
-
 // @route post /bills
 // @desc create a bill
 // @access Public
@@ -53,6 +70,9 @@ exports.createBill = asyncHandler(async (req, res) => {
       iconName: req.body.iconName,
       user: req.user._id,
       billDate: req.body.billDate,
+      weekNumber:req.body.weekNumber,
+      monthNumber:req.body.monthNumber,
+      yearNumber:req.body.yearNumber,
     });
   res.status(200).json({ success: true, data: bill });
 })
