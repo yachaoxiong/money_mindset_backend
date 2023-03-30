@@ -27,6 +27,18 @@ const billSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  weekNumber:{
+    type:Number,
+    required:true
+  },
+  monthNumber:{
+    type:Number,
+    required:true
+  },
+  yearNumber:{
+    type:Number,
+    required:true
+  }
 }, {
   timestamps: true,
 });

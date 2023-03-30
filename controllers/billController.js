@@ -8,39 +8,40 @@ const MongoClient = require('mongodb').MongoClient;
 // @access Public
 
 exports.getBills = asyncHandler(async (req, res) => {
-  // get all bills from current user and current year
-  const uri = 'mongodb://localhost:27017/money_mindset';
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
   try {
+    
+    let groupByField, sortField;
+    if (req.params.period === "week") {
+      groupByField = "$weekNumber";
+      sortField = "billDate";
+    } else if (req.params.period === "month") {
+      groupByField = "$monthNumber";
+      sortField = "billDate";
+    } else {
+      groupByField = "$yearNumber";
+      sortField = "billDate";
+    }
+
     const pipeline = [
       {
-        $match: {user: req.user._id,}
+        $match: { user: req.user._id },
       },
       {
         $group: {
-          _id: { $dateToString: { format: "%Y-%m-%d", date: "$billDate" } },
-          billItems: { $push: "$$ROOT" }
-        }
+          _id: groupByField,
+          billItems: { $push: "$$ROOT" },
+        },
       },
       {
-        $sort: { "_id": -1 }
-      }
+        $sort: { [sortField]: -1 },
+      },
     ];
-    const result = await client.db().collection('bills').aggregate(pipeline).toArray();
-    res.status(200).json({success: true, data: result});
+    const result = await Bill.aggregate(pipeline).exec();
+    res.status(200).json({ success: true, data: result });
   } catch (err) {
     console.log(err.message);
   }
-
-  // const bills = await Bill.find({
-  //   user: req.user._id,
-  //   billDate: {
-  //     $gte: new Date(new Date().getFullYear(), 0, 1),
-  //     $lt: new Date(new Date().getFullYear() + 1, 0, 1),
-  //   },
-  // });
-  // res.status(200).json({success: true, data: bills});
-})
+});
 
 // @route get /bills/:id
 // @desc get a bill
@@ -73,6 +74,9 @@ exports.createBill = asyncHandler(async (req, res) => {
       iconName: req.body.iconName,
       user: req.user._id,
       billDate: req.body.billDate,
+      weekNumber:req.body.weekNumber,
+      monthNumber:req.body.monthNumber,
+      yearNumber:req.body.yearNumber,
     });
   res.status(200).json({ success: true, data: bill });
 })
