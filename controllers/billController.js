@@ -9,7 +9,6 @@ const MongoClient = require('mongodb').MongoClient;
 
 exports.getBills = asyncHandler(async (req, res) => {
   try {
-    
     let groupByField, sortField;
     if (req.params.period === "week") {
       groupByField = "$weekNumber";
@@ -21,7 +20,7 @@ exports.getBills = asyncHandler(async (req, res) => {
       groupByField = "$yearNumber";
       sortField = "billDate";
     }
-
+    
     const pipeline = [
       {
         $match: { user: req.user._id },
@@ -56,9 +55,6 @@ exports.getBill = asyncHandler(async (req, res) => {
   }
   res.status(200).json({ success: true, data: bill });
 })
-
-
-
 
 // @route post /bills
 // @desc create a bill
