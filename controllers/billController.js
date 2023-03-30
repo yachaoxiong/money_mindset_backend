@@ -89,7 +89,7 @@ exports.updateBill = asyncHandler(async (req, res) => {
 // @route delete /bills/:id
 
 exports.deleteBill = asyncHandler(async (req, res) => {
-
+  console.log("delete bill")
   const userID = req.user._id;
   const bill = await Bill.findById(req.params.id);
   if (!bill) {
