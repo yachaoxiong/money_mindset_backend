@@ -4,6 +4,30 @@ const asyncHandler = require("express-async-handler");
 // @route get /bills
 // @desc get all bills
 // @access Public
+
+exports.getBillsByType = asyncHandler(async (req, res) => {
+  const { type } = req.params;
+  const regex = new RegExp(type, 'i'); 
+
+  const pipeline = [
+    {
+      $match: {user: req.user._id,iconName: regex}
+    },
+    {
+      $group: {
+        _id: { $dateToString: { format: "%Y-%m-%d", date: "$billDate" } },
+        billItems: { $push: "$$ROOT" }
+      }
+    },
+    {
+      $sort: { "_id": -1 }
+    }
+  ];
+  
+  const bills = await Bill.aggregate(pipeline).exec();
+  res.status(200).json({ success: true, data: bills });
+});
+
 exports.getBillsByGroup = asyncHandler(async (req, res) => {
   const pipeline = [
     {
