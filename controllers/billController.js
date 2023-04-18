@@ -4,6 +4,16 @@ const asyncHandler = require("express-async-handler");
 // @route get /bills
 // @desc get all bills
 // @access Public
+exports.getAllBills = asyncHandler(async (req, res) => {
+console.log("req.user._id", req.user._id)
+  const bills = await Bill.find({ user: req.user._id });
+  console.log("bills", bills)
+  res.status(200).json({ success: true, data: bills });
+});
+
+// @route get /bills
+// @desc get all bills
+// @access Public
 exports.getBillsByGroup = asyncHandler(async (req, res) => {
   const pipeline = [
     {
