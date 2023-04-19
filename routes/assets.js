@@ -7,4 +7,8 @@ router.get('/', passport.authenticate("jwt", { session: false }), AssetsControll
 
 router.post('/', passport.authenticate("jwt", { session: false }), AssetsController.createAssets);
 
+router.delete('/:id', passport.authenticate("jwt", { session: false }), AssetsController.deleteAssets);
+
+router.put('/:id', passport.authenticate("jwt", { session: false }), AssetsController.updateAssets);
+
 module.exports = router;

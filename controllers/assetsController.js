@@ -36,3 +36,40 @@ exports.createAssets = asyncHandler(async (req, res) => {
         });
     res.status(200).json({ success: true, data: assets });
 })
+
+exports.updateAssets = asyncHandler(async (req, res) => {
+
+  const userID = req.user._id;
+
+  const asset = await Assets.findById(req.params.id);
+  if (!asset) {
+    res.status(404);
+    throw new Error("Bill not found");
+  }
+
+  if (asset.user.toString() !== userID.toString()) {
+    res.status(401);
+    throw new Error("Not authorized to update this bill");
+  }
+
+  const updatedAsset = await Assets.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  res.status(200).json({ success: true, data: updatedAsset });
+})
+
+exports.deleteAssets = asyncHandler(async (req, res) => {
+  console.log("delete assets");
+  const userID = req.user._id;
+  const asset = await Assets.findByIdAndDelete(req.params.id); // <-- Changed line
+  if (!asset) {
+    res.status(404);
+    throw new Error("Asset not found");
+  }
+  if (asset.user.toString() !== userID.toString()) {
+    res.status(401);
+    throw new Error("Not authorized to delete this asset");
+  }
+  res.status(200).json({ success: true, data: {} });
+});
