@@ -9,6 +9,8 @@ router.get('/:period', passport.authenticate("jwt", { session: false }), BillCon
 
 router.get('/all/current', passport.authenticate("jwt", { session: false }), BillController.getAllBills);
 
+router.get('/search/:type', passport.authenticate("jwt", { session: false }), BillController.getBillsByType);
+
 router.post('/', passport.authenticate("jwt", { session: false }), BillController.createBill);
 
 //router.get('/:id', passport.authenticate("jwt", { session: false }), BillController.getBill);
