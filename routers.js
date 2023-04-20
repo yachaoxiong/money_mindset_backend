@@ -7,7 +7,7 @@ const assetsRoutes = require('./routes/assets');
 
 app.use('/auth', authRoutes);
 app.use('/bill', billRoutes);
-app.use('/budget', budgetRoutes);
+app.use('/budgets', budgetRoutes);
 app.use('/assets', assetsRoutes);
 
 module.exports = app;
