@@ -5,8 +5,8 @@ const asyncHandler = require("express-async-handler");
 // @desc get all budgets
 
 exports.getBudgets = asyncHandler(async (req, res) => {
-  
-  const { budgetType } = req.query;
+  console.log("route get /budgets/:budgetType")
+  const { budgetType } = req.params;
   const yearNumber = new Date().getFullYear();
   const monthNumber = new Date().getMonth();
 
@@ -19,7 +19,7 @@ exports.getBudgets = asyncHandler(async (req, res) => {
 // @access Public
 
 exports.getBudget = asyncHandler(async (req, res) => {
-
+ console.log("route get /budgets/:id")
   const budget = await Budget.findById(req.params.id);
   if (!budget) {
     res.status(404);

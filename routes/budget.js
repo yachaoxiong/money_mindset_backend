@@ -3,7 +3,7 @@ const router = express.Router();
 const BudgetController = require('../controllers/budgetController');
 const passport = require('passport');
 
-router.get('/:period', passport.authenticate("jwt", { session: false }),BudgetController.getBudget);
+router.get('/all/:budgetType', passport.authenticate("jwt", { session: false }), BudgetController.getBudgets);
 
 router.post('/', passport.authenticate("jwt", { session: false }),BudgetController.createBudget);
 
@@ -12,5 +12,7 @@ router.get('/:id', passport.authenticate("jwt", { session: false }),BudgetContro
 router.put('/:id', passport.authenticate("jwt", { session: false }),BudgetController.updateBudget);
 
 router.delete('/:id', passport.authenticate("jwt", { session: false }),BudgetController.deleteBudget);
+
+
 
 module.exports = router;
